@@ -5,5 +5,5 @@ source files that already resides in other git repositories.
 
 For instance:
 https://github.com/eriksjolund/openseadragon/tree/image_job_start_function_redefinition
-https://github.com/eriksjolund/osd-spot-viewer
+
 
