@@ -1,6 +1,6 @@
 //! openseadragon 2.1.0
-//! Built on 2016-05-26
-//! Git commit: v2.1.0-242-5071540-dirty
+//! Built on 2016-05-27
+//! Git commit: v2.1.0-243-d7bacf3
 //! http://openseadragon.github.io
 //! License: http://openseadragon.github.io/license/
 
@@ -15429,7 +15429,21 @@ function transform( stiffness, x ) {
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// This function may be used from osd-spot-viewer
+function setupImageCallbacks(imagejob) {
+    imagejob.image.onload = function(){
+        imagejob.finish( true );
+    };
+    imagejob.image.onabort = imagejob.image.onerror = function(){
+        imagejob.errorMsg = "Image load aborted";
+        imagejob.finish( false );
+    };
 
+    imagejob.jobId = window.setTimeout( function(){
+        imagejob.errorMsg = "Image load exceeded timeout";
+        imagejob.finish( false );
+    }, imagejob.timeout);
+}
 
 (function( $ ){
 
@@ -15449,13 +15463,15 @@ function ImageJob ( options ) {
     this.image = null;
 }
 
-
-    
 ImageJob.prototype = {
     errorMsg: null,
     // Ok, introducing the "startFunction" is not the proper
     // way to implement loading tiles from
-    // a single files. TODO: redesign this
+    // a single files. TODO: Redesign this.
+    // Right now startFunction is meant to be defined
+    // outside OpenSeadragon, and serves as a way to modify
+    // the behaviour of OpenSeadragon without having to have the code
+    // inside the OpenSeadragon file tree.
     start: function() { startFunction(this); } ,
 
     finish: function( successful ) {
